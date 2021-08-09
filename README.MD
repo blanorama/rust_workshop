@@ -10,6 +10,13 @@ Alternative you can use [rustup](https://rustup.rs/) to setup your envirnoment w
 - eamodio.gitlens
 - donjayamanne.githistory
 - be5invis.toml   
+## About Rust
+[Rust Homepage](https://www.rust-lang.org/)   
+[Rust Book](https://doc.rust-lang.org/book/)   
+[Rust by Example](https://doc.rust-lang.org/rust-by-example)   
+[Rust are we Web yet](https://www.arewewebyet.org/)   
+[Rust are we Gui yet](http://www.areweguiyet.com/)   
+[Rust are we Learning yet](http://www.arewelearningyet.com/)
 ## About the workshop
 Topics can be found in the `examples` folder.
 ## Topics
