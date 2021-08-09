@@ -15,6 +15,7 @@ Topics can be found in the `examples` folder.
 ## Topics
 - **Primitives**
 - **Custom types**
-- **Flow Control** (WIP)
-- **Optional and Result** (WIP)
+- **Flow Control**
+- **Functions**
+- **Optional and Result**
 - ....
