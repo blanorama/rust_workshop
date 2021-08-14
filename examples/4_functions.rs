@@ -15,6 +15,7 @@ fn main() {
 
     println!("x was {}", x);
 
+    //Need to user generics because function size must be known at compile time
     fn is_even<F>(calc_function: F, x: i64, y: i64) -> bool
     where
         F: Fn(i64, i64) -> i64,

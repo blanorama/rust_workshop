@@ -1,7 +1,7 @@
 # Rust starter workshop
 ## About the setup
 I am using vscode with the vscode container plugin to provide an out of the box working environment, so you will need docker for that.    
-Alternative you can use [rustup](https://rustup.rs/) to setup your envirnoment without docker.   
+Alternative you can use [rustup](https://rustup.rs/) to setup your environment without docker.   
 ### Used vscode plugins
 - matklad.rust-analyzer
 - bungcip.better-toml
@@ -11,6 +11,7 @@ Alternative you can use [rustup](https://rustup.rs/) to setup your envirnoment w
 - donjayamanne.githistory
 - be5invis.toml   
 ## About Rust
+[Rust Starter Pack](https://opheron.github.io/rust-starter-pack/)
 [Rust Homepage](https://www.rust-lang.org/)   
 [Rust Book](https://doc.rust-lang.org/book/)   
 [Rust by Example](https://doc.rust-lang.org/rust-by-example)   

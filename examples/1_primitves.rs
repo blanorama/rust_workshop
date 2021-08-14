@@ -5,13 +5,13 @@ fn main() {
     let double = 1.;
     let bool = false;
 
-    // {} display formating
+    // {} display formatting
     println!("{} + {} = {}", int, double, double + (int as f64)); // as xx is a typecast
     println!("{} && {} = {}", bool, false, bool && false);
 
     let tuple = (10, "Zehn", 10.);
 
-    // :#? = debug formating
+    // :#? = debug formatting
     println!("{:#?}", tuple);
     println!("{}", tuple.1);
 
@@ -47,10 +47,10 @@ fn main() {
 
     {
         let x = x;
-        // x = "abc";  // doesn't compile becaus x is now imuable in this scope
+        // x = "abc";  // doesn't compile because x is now immutable in this scope
     }
 
-    // now the imutable var is out of scope
+    // now the immutable var is out of scope
     x = "c";
 
     println!("{}", x);
