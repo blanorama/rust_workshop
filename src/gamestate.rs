@@ -1,80 +1,11 @@
-use std::{
-    collections::LinkedList,
-    convert::{TryFrom, TryInto},
-    io::Stdout,
-};
+use std::{collections::LinkedList, convert::TryInto, io::Stdout};
 
 use termion::raw::RawTerminal;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Point2d {
-    x: i32,
-    y: i32,
-}
-
-impl Point2d {
-    pub fn new(x: i32, y: i32) -> Self {
-        Point2d { x, y }
-    }
-}
-
-fn correct_boundary(value: i32, max: i32) -> i32 {
-    if value < 0 {
-        return max;
-    }
-
-    if value > max {
-        return 0;
-    }
-
-    value
-}
-
-impl Point2d {
-    fn move_by_direction(&mut self, direction: &Direction, max_y: i32, max_x: i32) {
-        match direction {
-            Direction::Left => {
-                self.x = correct_boundary(self.x - 1, max_x);
-            }
-            Direction::Right => {
-                self.x = correct_boundary(self.x + 1, max_x);
-            }
-            Direction::Up => {
-                self.y = correct_boundary(self.y + 1, max_y);
-            }
-            Direction::Down => {
-                self.y = correct_boundary(self.y - 1, max_y);
-            }
-        };
-    }
-}
-
-impl Point2d {
-    pub fn path_length(&self, other: Point2d) -> u32 {
-        f32::sqrt((self.x + other.x + self.y + other.y) as f32).round() as u32
-    }
-}
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum Direction {
-    Up,
-    Down,
-    Right,
-    Left,
-}
-
-impl TryFrom<char> for Direction {
-    type Error = String;
-
-    fn try_from(value: char) -> Result<Self, Self::Error> {
-        match value {
-            'w' => Ok(Direction::Up),
-            's' => Ok(Direction::Down),
-            'd' => Ok(Direction::Right),
-            'a' => Ok(Direction::Left),
-            _ => Err("Can't convert".into()),
-        }
-    }
-}
+use crate::{
+    direction::Direction,
+    point::{is_point_on_strait_line, Point2d},
+};
 
 #[derive(Debug)]
 pub struct Snake {
@@ -87,14 +18,19 @@ pub struct Snake {
 }
 
 impl Snake {
-    fn new() -> Self {
+    fn new(max_y: i32, max_x: i32) -> Self {
+        let head_position = Point2d::new(10, 10);
+        let current_direction = Direction::Right;
+        let length: u32 = 10;
+        let mut tail_position = head_position.clone();
+        tail_position.move_by_direction(&current_direction, (length - 1) as i32, max_y, max_x);
         Snake {
             edges_position: LinkedList::new(),
             edges_directions: LinkedList::new(),
-            length: 1,
-            current_direction: Direction::Right,
-            head_position: Point2d::new(0, 0),
-            tail_position: Point2d::new(0, 0),
+            length,
+            current_direction,
+            head_position,
+            tail_position,
         }
     }
 
@@ -112,13 +48,14 @@ impl Snake {
         }
 
         self.head_position
-            .move_by_direction(&self.current_direction, max_y, max_x);
+            .move_by_direction(&self.current_direction, 1, max_y, max_x);
 
         self.tail_position.move_by_direction(
             &self
                 .edges_directions
                 .back()
                 .unwrap_or(&self.current_direction),
+            1,
             max_y,
             max_x,
         );
@@ -131,11 +68,17 @@ impl Snake {
         }
     }
 
-    fn draw(&self, x: i32, y: i32) -> bool {
+    fn draw(&self, x: i32, y: i32, terminal: &mut RawTerminal<Stdout>) -> bool {
         let point = &Point2d::new(x, y);
         if self.edges_directions.len() == 0 {
             if is_point_on_strait_line(&self.head_position, &self.tail_position, point) {
-                return true;
+                use std::io::Write;
+                write!(
+                    terminal,
+                    "{}\u{2B1B}",
+                    termion::cursor::Goto((x + 1).try_into().unwrap(), (y + 1).try_into().unwrap())
+                )
+                .ok();
             }
         } else {
             let mut iter = self.edges_position.iter();
@@ -145,7 +88,16 @@ impl Snake {
             while let Some(line_end) = line_end_option {
                 let line_start = line_start_option.unwrap();
                 if is_point_on_strait_line(line_start, line_end, point) {
-                    return true;
+                    use std::io::Write;
+                    write!(
+                        terminal,
+                        "{}\u{2B1B}",
+                        termion::cursor::Goto(
+                            (x + 1).try_into().unwrap(),
+                            (y + 1).try_into().unwrap()
+                        )
+                    )
+                    .ok();
                 }
 
                 line_start_option = line_end_option;
@@ -154,67 +106,6 @@ impl Snake {
         }
         return false;
     }
-}
-
-fn is_point_on_strait_line(line_start: &Point2d, line_end: &Point2d, point: &Point2d) -> bool {
-    ((point.x >= line_start.x && point.x <= line_end.x
-        || point.x <= line_start.x && point.x >= line_end.x)
-        && point.y == line_start.y)
-        || ((point.y >= line_start.y && point.y <= line_end.y
-            || point.y <= line_start.y && point.y >= line_end.y)
-            && point.x == line_start.x)
-}
-
-#[test]
-fn test_is_point_on_strait_line() {
-    assert_eq!(
-        is_point_on_strait_line(
-            &Point2d::new(10, 10),
-            &Point2d::new(20, 10),
-            &Point2d::new(15, 10)
-        ),
-        true
-    );
-    assert_eq!(
-        is_point_on_strait_line(
-            &Point2d::new(20, 10),
-            &Point2d::new(10, 10),
-            &Point2d::new(15, 10)
-        ),
-        true
-    );
-    assert_eq!(
-        is_point_on_strait_line(
-            &Point2d::new(10, 10),
-            &Point2d::new(20, 10),
-            &Point2d::new(21, 10)
-        ),
-        false
-    );
-    assert_eq!(
-        is_point_on_strait_line(
-            &Point2d::new(20, 10),
-            &Point2d::new(10, 10),
-            &Point2d::new(9, 10)
-        ),
-        false
-    );
-    assert_eq!(
-        is_point_on_strait_line(
-            &Point2d::new(10, 10),
-            &Point2d::new(20, 10),
-            &Point2d::new(15, 9)
-        ),
-        false
-    );
-    assert_eq!(
-        is_point_on_strait_line(
-            &Point2d::new(20, 10),
-            &Point2d::new(10, 10),
-            &Point2d::new(15, 9)
-        ),
-        false
-    );
 }
 
 #[derive(Debug)]
@@ -227,7 +118,7 @@ pub struct GameState {
 impl GameState {
     pub fn new(max_y: i32, max_x: i32) -> Self {
         GameState {
-            snake: Snake::new(),
+            snake: Snake::new(max_y, max_x),
             max_x,
             max_y,
         }
@@ -241,7 +132,7 @@ impl GameState {
         self.snake.update(new_direction, self.max_y, self.max_x)
     }
 
-    pub fn draw(&mut self, x: i32, y: i32) -> bool {
-        return self.snake.draw(x, y);
+    pub fn draw(&mut self, x: i32, y: i32, terminal: &mut RawTerminal<Stdout>) -> bool {
+        return self.snake.draw(x, y, terminal);
     }
 }

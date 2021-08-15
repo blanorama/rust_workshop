@@ -7,7 +7,9 @@ use termion::terminal_size;
 
 use std::io::{Read, Write};
 
+mod direction;
 mod gamestate;
+mod point;
 
 fn main() {
     // Set terminal to raw mode to allow reading stdin one key at a time
@@ -18,10 +20,11 @@ fn main() {
     let mut stdin = termion::async_stdin().bytes();
 
     write!(
-        stdout,
-        "{}{}",
+        &mut stdout,
+        "{}{}{}",
         termion::clear::All,
         termion::cursor::Goto(1, 1),
+        termion::cursor::Hide
     )
     .ok();
     let (width, height) = terminal_size().expect("Can't get terminal size, exiting....");
@@ -30,10 +33,11 @@ fn main() {
 
     loop {
         write!(
-            stdout,
-            "{}{}",
+            &mut stdout,
+            "{}{}{}",
             termion::clear::All,
             termion::cursor::Goto(1, 1),
+            termion::cursor::Hide
         )
         .ok();
         stdout.flush().unwrap();
@@ -43,7 +47,7 @@ fn main() {
         match key {
             Some(Ok(b'c')) => {
                 write!(
-                    stdout,
+                    &mut stdout,
                     "{}{}{}",
                     termion::clear::All,
                     termion::cursor::Goto(1, 1),
@@ -62,13 +66,11 @@ fn main() {
 
         for x in 0..width {
             for y in 0..height {
-                if gamestate.draw(x.into(), y.into()) {
-                    write!(stdout, "{}\u{2B1B}", termion::cursor::Goto(x + 1, y + 1)).ok();
-                }
+                gamestate.draw(x.into(), y.into(), &mut stdout);
             }
         }
 
         stdout.flush().unwrap();
-        std::thread::sleep(Duration::from_millis(10))
+        std::thread::sleep(Duration::from_millis(33))
     }
 }
