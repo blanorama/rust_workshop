@@ -1,4 +1,4 @@
-use std::convert::TryFrom;
+use std::{convert::TryFrom};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Direction {
@@ -6,6 +6,15 @@ pub enum Direction {
     Down,
     Right,
     Left,
+}
+
+impl Direction {
+    pub fn isOpposite(&self, other: &Direction) -> bool {
+        self == &Direction::Up && other == &Direction::Down
+            || self == &Direction::Down && other == &Direction::Up
+            || self == &Direction::Right && other == &Direction::Left
+            || self == &Direction::Left && other == &Direction::Right
+    }
 }
 
 impl TryFrom<char> for Direction {

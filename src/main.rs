@@ -32,15 +32,7 @@ fn main() {
     let mut gamestate = GameState::new(height.into(), width.into());
 
     loop {
-        write!(
-            &mut stdout,
-            "{}{}{}",
-            termion::clear::All,
-            termion::cursor::Goto(1, 1),
-            termion::cursor::Hide
-        )
-        .ok();
-        stdout.flush().unwrap();
+        write!(&mut stdout, "{}", termion::clear::All,).ok();
 
         let key = stdin.next();
 
@@ -60,17 +52,13 @@ fn main() {
                 gamestate.update_gamestate(x.into());
             }
             _ => {
-                gamestate.update_gamestate('c');
+                gamestate.update_gamestate(' ');
             }
         }
 
-        for x in 0..width {
-            for y in 0..height {
-                gamestate.draw(x.into(), y.into(), &mut stdout);
-            }
-        }
+        gamestate.draw(&mut stdout);
 
         stdout.flush().unwrap();
-        std::thread::sleep(Duration::from_millis(33))
+        std::thread::sleep(Duration::from_millis(333))
     }
 }
