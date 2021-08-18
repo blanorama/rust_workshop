@@ -4,11 +4,12 @@ use crate::direction::Direction;
 pub struct Point2d {
     pub x: i32,
     pub y: i32,
+    pub direction: Direction,
 }
 
 impl Point2d {
-    pub fn new(x: i32, y: i32) -> Self {
-        Point2d { x, y }
+    pub fn new(x: i32, y: i32, direction: Direction) -> Self {
+        Point2d { x, y, direction }
     }
 }
 
@@ -25,8 +26,12 @@ fn correct_boundary(value: i32, max: i32) -> i32 {
 }
 
 impl Point2d {
-    pub fn move_by_direction(&mut self, direction: &Direction, max_y: i32, max_x: i32) {
-        match direction {
+    pub fn update_direction_by_parent(&mut self, parent: &Point2d) {
+        self.direction = parent.direction.clone();
+    }
+
+    pub fn move_by_direction(&mut self, max_y: i32, max_x: i32) {
+        match self.direction {
             Direction::Left => {
                 self.x = correct_boundary(self.x - 1, max_x);
             }
