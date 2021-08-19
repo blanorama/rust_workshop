@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use gamestate::GameState;
+use game::Game;
 use termion;
 use termion::raw::IntoRawMode;
 use termion::terminal_size;
@@ -8,7 +8,7 @@ use termion::terminal_size;
 use std::io::{Read, Write};
 
 mod direction;
-mod gamestate;
+mod game;
 mod point;
 
 fn main() {
@@ -29,7 +29,7 @@ fn main() {
     .ok();
     let (width, height) = terminal_size().expect("Can't get terminal size, exiting....");
 
-    let mut gamestate = GameState::new(height.into(), width.into());
+    let mut gamestate = Game::new(height.into(), width.into());
 
     loop {
         write!(&mut stdout, "{}", termion::clear::All,).ok();
@@ -49,10 +49,10 @@ fn main() {
                 return;
             }
             Some(Ok(x)) => {
-                gamestate.update_gamestate(x.into());
+                gamestate.update(x.into());
             }
             _ => {
-                gamestate.update_gamestate(' ');
+                gamestate.update(' ');
             }
         }
 

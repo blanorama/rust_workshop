@@ -4,30 +4,22 @@ use crate::direction::Direction;
 pub struct Point2d {
     pub x: i32,
     pub y: i32,
-    pub direction: Direction,
 }
 
 impl Point2d {
-    pub fn new(x: i32, y: i32, direction: Direction) -> Self {
-        Point2d { x, y, direction }
-    }
-}
-
-fn correct_boundary(value: i32, max: i32) -> i32 {
-    if value < 0 {
-        return max;
+    pub fn new(x: u16, y: u16) -> Self {
+        Point2d {
+            x: (x - (x % 2)).into(),
+            y: y.into(),
+        }
     }
 
-    if value > max {
-        return 0;
+    pub fn new_random_point(max_y: u16, max_x: u16) -> Point2d {
+        Point2d::new(rand::random::<u16>() % max_x, rand::random::<u16>() % max_y)
     }
 
-    value
-}
-
-impl Point2d {
-    pub fn move_by_direction(&mut self, max_y: i32, max_x: i32) {
-        match self.direction {
+    pub fn move_by_direction(&mut self, max_y: u16, max_x: u16, direction: &Direction) {
+        match direction {
             Direction::Left => {
                 self.x = correct_boundary(self.x - 2, max_x);
             }
@@ -42,4 +34,16 @@ impl Point2d {
             }
         };
     }
+}
+
+fn correct_boundary(value: i32, max: u16) -> i32 {
+    if value < 0 {
+        return max.into();
+    }
+
+    if value > max.into() {
+        return 0;
+    }
+
+    value
 }
