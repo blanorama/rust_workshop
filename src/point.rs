@@ -26,17 +26,13 @@ fn correct_boundary(value: i32, max: i32) -> i32 {
 }
 
 impl Point2d {
-    pub fn update_direction_by_parent(&mut self, parent: &Point2d) {
-        self.direction = parent.direction.clone();
-    }
-
     pub fn move_by_direction(&mut self, max_y: i32, max_x: i32) {
         match self.direction {
             Direction::Left => {
-                self.x = correct_boundary(self.x - 1, max_x);
+                self.x = correct_boundary(self.x - 2, max_x);
             }
             Direction::Right => {
-                self.x = correct_boundary(self.x + 1, max_x);
+                self.x = correct_boundary(self.x + 2, max_x);
             }
             Direction::Up => {
                 self.y = correct_boundary(self.y - 1, max_y);
