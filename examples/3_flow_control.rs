@@ -20,6 +20,13 @@ fn main() {
     };
     println!("x: {}", x);
 
+    let x = match x {
+        1 | 2 => "block",
+        3 => "block return",
+        _ => "default",
+    };
+    println!("x: {}", x);
+
     let tuple = (1, 3);
     match tuple {
         (1, 3) => {

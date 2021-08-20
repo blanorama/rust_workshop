@@ -5,7 +5,7 @@ const MEANING_OF_LIVE: i8 = 42;
 #[derive(Debug)]
 struct Point {
     x: i64,
-    y: u64,
+    y: u64, //u64: unsigned 64 bit integer
 }
 
 #[derive(Debug)]
@@ -23,7 +23,8 @@ enum Shape {
 fn main() {
     type Text = String;
 
-    let what: Text = Text::from("what");
+    let _what: Text = Text::from("what");
+    let what: Text = "what".into();
 
     println!("{}", what);
 

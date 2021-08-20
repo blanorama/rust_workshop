@@ -2,7 +2,11 @@ fn main() {
     let str = "str";
     let string = String::from("string");
     let int = 999999999;
+    let int = 999999999i64;
+    let int16 = 9999 as i16;
+    let intUnderscore = 999_999_999;
     let double = 1.;
+    let double32 = 1 as f32;
     let bool = false;
 
     // {} display formatting
@@ -19,7 +23,7 @@ fn main() {
 
     let array2 = [1; 5];
 
-    println!("{:#?} \nlen: {}", array, array.len());
+    println!("{:?} \nlen: {}", array, array.len());
 
     println!("{:#?}", array2);
 
@@ -54,4 +58,13 @@ fn main() {
     x = "c";
 
     println!("{}", x);
+
+    let myTuple = (10, "Zehn", 10.);
+    // myTuple.1 = 1 tuple is immutable
+
+    let mut myMutTuple = (10, "Zehn", 10.);
+    myMutTuple.1 = "Eins";
+
+    let mut myMutTuple = (10, "Zehn", 10.);
+    myMutTuple.1 = "Eins"
 }
