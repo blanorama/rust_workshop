@@ -18,32 +18,38 @@ impl Point2d {
         Point2d::new(rand::random::<u16>() % max_x, rand::random::<u16>() % max_y)
     }
 
-    pub fn move_by_direction(&mut self, max_y: u16, max_x: u16, direction: &Direction) {
+    pub fn move_by_direction(
+        &mut self,
+        max_y: u16,
+        max_x: u16,
+        direction: &Direction,
+    ) -> Result<(), ()> {
         match direction {
             Direction::Left => {
-                self.x = correct_boundary(self.x - 2, max_x);
+                self.x = correct_boundary(self.x - 2, max_x)?;
             }
             Direction::Right => {
-                self.x = correct_boundary(self.x + 2, max_x);
+                self.x = correct_boundary(self.x + 2, max_x)?;
             }
             Direction::Up => {
-                self.y = correct_boundary(self.y - 1, max_y);
+                self.y = correct_boundary(self.y - 1, max_y)?;
             }
             Direction::Down => {
-                self.y = correct_boundary(self.y + 1, max_y);
+                self.y = correct_boundary(self.y + 1, max_y)?;
             }
         };
+        Ok(())
     }
 }
 
-fn correct_boundary(value: i32, max: u16) -> i32 {
-    if value < 0 {
-        return max.into();
+fn correct_boundary(value: i32, max: u16) -> Result<i32, ()> {
+    if value <= 0 {
+        return Err(());
     }
 
-    if value > max.into() {
-        return 0;
+    if value >= max.into() {
+        return Err(());
     }
 
-    value
+    Ok(value)
 }

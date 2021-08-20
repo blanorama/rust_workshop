@@ -15,9 +15,6 @@ impl Snake {
     fn new(max_y: u16, max_x: u16) -> Self {
         let mut body = vec![];
         body.push(Point2d::new((max_x / 2).into(), (max_y / 2).into()));
-        body.push(Point2d::new((max_x / 2 - 2).into(), (max_y / 2).into()));
-        body.push(Point2d::new((max_x / 2 - 4).into(), (max_y / 2).into()));
-        body.push(Point2d::new((max_x / 2 - 6).into(), (max_y / 2).into()));
 
         Snake {
             body,
@@ -54,13 +51,20 @@ impl Snake {
                 if new_direction.ne(current_direction)
                     && !new_direction.isOpposite(current_direction)
                 {
-                    head.move_by_direction(max_y, max_x, &new_direction);
+                    self.alive =
+                        self.alive && head.move_by_direction(max_y, max_x, &new_direction).is_ok();
                     self.direction = new_direction;
                 } else {
-                    head.move_by_direction(max_y, max_x, current_direction);
+                    self.alive = self.alive
+                        && head
+                            .move_by_direction(max_y, max_x, current_direction)
+                            .is_ok();
                 }
             } else {
-                head.move_by_direction(max_y, max_x, current_direction);
+                self.alive = self.alive
+                    && head
+                        .move_by_direction(max_y, max_x, current_direction)
+                        .is_ok();
             }
         }
 
@@ -121,14 +125,20 @@ impl Game {
                 self.paused = !self.paused;
             }
             '^' => {
-                self.paused = !self.paused;
+                self.debug = !self.debug;
             }
             _ => {}
         }
 
-        if !self.paused {
+        if !self.paused && self.snake.alive {
+            let last_level = self.snake.body.len();
             self.snake
-                .update(new_direction, self.max_y, self.max_x, &self.food_pos)
+                .update(new_direction, self.max_y, self.max_x, &self.food_pos);
+            let new_level = self.snake.body.len();
+
+            if last_level != new_level {
+                self.food_pos = Point2d::new_random_point(self.max_y, self.max_x);
+            }
         }
     }
 
@@ -140,6 +150,14 @@ impl Game {
                 termion::cursor::Goto(1, 1),
                 self.snake,
                 self.food_pos,
+            )
+            .ok();
+        } else {
+            write!(
+                terminal,
+                "{}Level:{}",
+                termion::cursor::Goto(1, 1),
+                self.snake.body.len()
             )
             .ok();
         }
@@ -155,5 +173,38 @@ impl Game {
             "\u{1F34E}",
         )
         .ok();
+
+        if !self.snake.alive {
+            write!(
+                terminal,
+                "{}{}",
+                termion::cursor::Goto(
+                    (self.max_x / 2).try_into().unwrap(),
+                    (self.max_y / 2).try_into().unwrap()
+                ),
+                "############",
+            )
+            .ok();
+            write!(
+                terminal,
+                "{}{}",
+                termion::cursor::Goto(
+                    (self.max_x / 2).try_into().unwrap(),
+                    (self.max_y / 2 - 1).try_into().unwrap()
+                ),
+                "# You Lose #",
+            )
+            .ok();
+            write!(
+                terminal,
+                "{}{}",
+                termion::cursor::Goto(
+                    (self.max_x / 2).try_into().unwrap(),
+                    (self.max_y / 2 - 2).try_into().unwrap()
+                ),
+                "############",
+            )
+            .ok();
+        }
     }
 }
