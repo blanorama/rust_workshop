@@ -11,7 +11,7 @@ fn main() {
 
     let tuple = (10, "Zehn", 10.);
 
-    // :#? = debug formatting
+    // :#? or :? = debug formatting
     println!("{:#?}", tuple);
     println!("{}", tuple.1);
 
