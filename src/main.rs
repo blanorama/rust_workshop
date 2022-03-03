@@ -59,6 +59,6 @@ fn main() {
         gamestate.draw(&mut stdout);
 
         stdout.flush().unwrap();
-        std::thread::sleep(Duration::from_millis(333))
+        std::thread::sleep(Duration::from_millis(100))
     }
 }
